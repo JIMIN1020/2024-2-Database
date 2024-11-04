@@ -23,6 +23,7 @@ function LoginPage() {
 
     if (result) {
       router.replace("/");
+      sessionStorage.setItem("id", loginForm.id);
     } else {
       window.alert("다시 시도해주세요.");
     }

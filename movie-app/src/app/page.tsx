@@ -1,8 +1,32 @@
+"use client";
+
 import Header from "@/components/Header";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 function HomePage() {
+  const [profile, setProfile] = useState<{
+    id: string;
+    password: string;
+    name: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const userId = sessionStorage.getItem("id");
+      if (userId) {
+        const res = await fetch(`/api/user?id=${userId}`, {
+          method: "GET",
+        });
+
+        const profile = await res.json().then((data) => data.result[0]);
+        setProfile(profile);
+      }
+    };
+
+    getUser();
+  }, []);
+
   return (
     <div className="w-full h-fit flex flex-col">
       <Header title="Movie Ranking Site" />
@@ -29,14 +53,25 @@ function HomePage() {
         </div>
         <div className="w-[300px] relative flex flex-col h-[100vh - 224px] gap-[20px]">
           <div className="border sticky top-[80px] right-0 rounded-[12px] border-gray-300 flex flex-col p-[24px] gap-[20px]">
-            <h2 className="font-bold text-lg text-center">프로필</h2>
-            <span>이름: </span>
-            <Link
-              href="/watch-list"
-              className="bg-blue-500 rounded-[8px] text-center text-white py-[12px] font-bold text-sm"
-            >
-              시청목록 보러가기
-            </Link>
+            {profile ? (
+              <>
+                <h2 className="font-bold text-lg text-center">프로필</h2>
+                <span>이름: {profile?.name}</span>
+                <Link
+                  href="/watch-list"
+                  className="bg-blue-500 rounded-[8px] text-center text-white py-[12px] font-bold text-sm"
+                >
+                  시청목록 보러가기
+                </Link>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="bg-blue-500 rounded-[8px] text-center text-white py-[12px] font-bold text-sm"
+              >
+                로그인하기
+              </Link>
+            )}
           </div>
         </div>
       </main>
