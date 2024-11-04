@@ -29,7 +29,7 @@ function JoinPage() {
           <label className="flex gap-[12px] items-center">
             <span className="font-bold w-[80px] text-end">password: </span>
             <input
-              type="text"
+              type="password"
               placeholder="password를 입력해주세요"
               className="w-[250px]"
             />
