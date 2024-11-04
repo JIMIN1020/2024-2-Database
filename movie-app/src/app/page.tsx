@@ -12,6 +12,7 @@ export interface Movie {
   summary: string;
   release_year: number;
   image_url: string;
+  avg_rating?: number;
 }
 
 function HomePage() {

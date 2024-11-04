@@ -14,7 +14,6 @@ interface Props {
 
 interface MovieType extends Movie {
   rating?: number;
-  avg_rating?: number;
 }
 
 function MoviePage({ params: { id } }: Props) {
@@ -81,7 +80,10 @@ function MoviePage({ params: { id } }: Props) {
               <span className="text-gray-700 text-sm">{movieInfo?.genre}</span>
             </div>
             <span className="font-bold">
-              평점: {Number(movieInfo?.avg_rating) || 0}
+              평점:{" "}
+              {movieInfo?.avg_rating
+                ? Number(movieInfo.avg_rating).toFixed(1)
+                : "-"}
             </span>
             <p>{movieInfo?.summary}</p>
             <hr />
@@ -89,7 +91,7 @@ function MoviePage({ params: { id } }: Props) {
               <h5 className="font-bold">내 평점</h5>
               {movieInfo?.rating ? (
                 <span className="text-2xl font-bold text-blue-600">
-                  {movieInfo.rating}점
+                  {movieInfo.rating.toFixed(1)}점
                 </span>
               ) : (
                 <>
