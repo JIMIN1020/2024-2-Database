@@ -1,11 +1,11 @@
+import Header from "@/components/Header";
+import Link from "next/link";
 import React from "react";
 
 function HomePage() {
   return (
     <div className="w-full h-fit flex flex-col">
-      <header className="w-full bg-white z-10 sticky top-0 left-0 py-[24px] px-[24px] flex justify-center">
-        <h1 className="text-gray-800 font-bold text-2xl">Movie Ranking Site</h1>
-      </header>
+      <Header title="Movie Ranking Site" />
       <div className="w-full flex justify-center py-[30px]">
         <p className="text-center">
           영화에 평점을 남기고, 랭킹을 확인해보세요!
@@ -31,12 +31,12 @@ function HomePage() {
           <div className="border sticky top-[80px] right-0 rounded-[12px] border-gray-300 flex flex-col p-[24px] gap-[20px]">
             <h2 className="font-bold text-lg text-center">프로필</h2>
             <span>이름: </span>
-            <button
-              type="button"
-              className="bg-blue-500 rounded-[8px] text-white py-[12px] font-bold text-sm"
+            <Link
+              href="/watch-list"
+              className="bg-blue-500 rounded-[8px] text-center text-white py-[12px] font-bold text-sm"
             >
               시청목록 보러가기
-            </button>
+            </Link>
           </div>
         </div>
       </main>

@@ -19,3 +19,9 @@ body {
   color: black;
   position: relative;
 }
+
+a {
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
