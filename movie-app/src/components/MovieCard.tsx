@@ -1,12 +1,16 @@
 import { Movie } from "@/app/page";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 function MovieCard({ movie }: { movie: Movie }) {
-  const { image_url, title, genre, release_year } = movie;
+  const { id, image_url, title, genre, release_year } = movie;
 
   return (
-    <div className="w-full flex flex-col items-center gap-[16px]">
+    <Link
+      href={`/movie/${id}`}
+      className="w-full flex flex-col items-center gap-[16px]"
+    >
       <Image
         src={image_url}
         alt="poster"
@@ -20,7 +24,7 @@ function MovieCard({ movie }: { movie: Movie }) {
         <span className="text-sm">{release_year}</span>
         <span>평점</span>
       </div>
-    </div>
+    </Link>
   );
 }
 

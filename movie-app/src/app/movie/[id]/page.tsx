@@ -1,12 +1,33 @@
 "use client";
 
+import { Movie } from "@/app/page";
 import Header from "@/components/Header";
 import StarButton from "@/components/StarButton";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-function MoviePage() {
+interface Props {
+  params: {
+    id: string;
+  };
+}
+
+function MoviePage({ params: { id } }: Props) {
   const [rating, setRating] = useState(0);
+  const [movieInfo, setMovieInfo] = useState<Movie | null>(null);
+
+  useEffect(() => {
+    const getMovieInfo = async () => {
+      const res = await fetch(`/api/movie/${id}`, {
+        method: "GET",
+      });
+
+      const movie = await res.json().then((data) => data.result[0]);
+      setMovieInfo(movie);
+    };
+
+    getMovieInfo();
+  }, []);
 
   return (
     <div className="flex flex-col w-full h-fit">
@@ -16,16 +37,24 @@ function MoviePage() {
       </div>
       <div className="w-full flex justify-center pt-[50px]">
         <div className="flex p-[36px] w-fit max-w-[800px] gap-[20px] border border-gray-300 rounded-[16px]">
-          <Image
-            src=""
-            alt="영화 포스터"
-            className="h-[400px] w-[270px] bg-gray-300"
-          />
+          {movieInfo && (
+            <Image
+              src={movieInfo.image_url}
+              alt="영화 포스터"
+              width={270}
+              height={400}
+              className="w-auto bg-gray-300"
+            />
+          )}
           <div className="flex-1 flex flex-col gap-[20px]">
-            <h3>영화 제목</h3>
-            <span>평점</span>
-            <span>개봉일</span>
-            <p>줄거리줄거리줄거리줄거리줄거리줄거리줄거리줄거리줄거리</p>
+            <div className="flex flex-col gap-[8px]">
+              <h3 className="text-xl font-bold">
+                {movieInfo?.title}({movieInfo?.release_year})
+              </h3>
+              <span className="text-gray-700 text-sm">{movieInfo?.genre}</span>
+            </div>
+            <span className="font-bold">평점</span>
+            <p>{movieInfo?.summary}</p>
             <hr />
             <form className="flex flex-col w-full gap-[12px]">
               <h5 className="font-bold">내 평점 남기기</h5>
