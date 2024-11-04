@@ -13,6 +13,7 @@ export interface Movie {
   release_year: number;
   image_url: string;
   avg_rating?: number;
+  hasInList?: boolean;
 }
 
 function HomePage() {
@@ -22,6 +23,16 @@ function HomePage() {
     password: string;
     name: string;
   } | null>(null);
+
+  const getMoviews = async () => {
+    const userId = sessionStorage.getItem("id");
+    const res = await fetch(`/api/movie?userId=${userId}`, {
+      method: "GET",
+    });
+
+    const movie = await res.json().then((data) => data.result);
+    setMovies(movie);
+  };
 
   useEffect(() => {
     const getUser = async () => {
@@ -34,15 +45,6 @@ function HomePage() {
         const profile = await res.json().then((data) => data.result[0]);
         setProfile(profile);
       }
-    };
-
-    const getMoviews = async () => {
-      const res = await fetch(`/api/movie`, {
-        method: "GET",
-      });
-
-      const movie = await res.json().then((data) => data.result);
-      setMovies(movie);
     };
 
     getMoviews();
@@ -62,7 +64,11 @@ function HomePage() {
       <main className="w-full flex gap-[20px] px-[24px] py-[36px]">
         <div className="grid grid-cols-4 gap-[20px] flex-1">
           {movies?.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
+            <MovieCard
+              key={movie.id}
+              movie={movie}
+              onClickList={() => getMoviews()}
+            />
           ))}
         </div>
         <div className="w-[300px] relative flex flex-col h-[100vh - 224px] gap-[20px]">

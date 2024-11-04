@@ -14,7 +14,7 @@ function Header({ title, hasBackButton }: Props) {
 
   return (
     <header
-      className={`w-full bg-white z-10 sticky top-0 left-0 py-[24px] px-[24px] flex ${
+      className={`w-full bg-white z-50 sticky top-0 left-0 py-[24px] px-[24px] flex ${
         hasBackButton ? "items-center gap-[18px]" : "justify-center"
       }`}
     >

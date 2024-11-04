@@ -12,7 +12,7 @@ interface Props {
   };
 }
 
-interface MovieType extends Movie {
+export interface MovieType extends Movie {
   rating?: number;
 }
 

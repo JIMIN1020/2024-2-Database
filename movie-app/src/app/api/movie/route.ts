@@ -2,8 +2,13 @@ import { query } from "@/app/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const getMoviews = `SELECT m.id, m.title, m.genre, m.summary, m.release_year, m.image_url, avg_r.avg_rating FROM Movie m
-  LEFT JOIN (SELECT movie_id, AVG(rating) AS avg_rating FROM Rating GROUP BY movie_id) avg_r ON m.id = avg_r.movie_id;
+  const { searchParams } = new URL(req.url);
+  const userId = searchParams.get("userId");
+
+  const getMoviews = `SELECT m.id, m.title, m.genre, m.summary, m.release_year, m.image_url, avg_r.avg_rating,
+  CASE WHEN wl.movie_id IS NOT NULL THEN true ELSE false END AS hasInList FROM Movie m
+    LEFT JOIN (SELECT movie_id, AVG(rating) AS avg_rating FROM Rating GROUP BY movie_id) avg_r ON m.id = avg_r.movie_id
+    LEFT JOIN WatchList wl ON wl.movie_id = m.id AND wl.user_id = '${userId}';
 `;
   const result = await query(getMoviews);
 
