@@ -8,21 +8,13 @@ const pool = mysql.createPool({
   database: process.env.DB,
 });
 
-// SQL SELECT 공통 함수
-export const defaultQuery = async (sqlQuery: string) => {
+// SQL 공통 함수
+export const query = async (sqlQuery: string) => {
   try {
     const [rows] = await pool.query(sqlQuery);
     return rows;
   } catch (err) {
-    return false;
-  }
-};
-
-export const insertQuery = async (sqlQuery: string, params: any[]) => {
-  try {
-    const [result] = await pool.query(sqlQuery, params);
-    return result;
-  } catch (err) {
+    console.log(err);
     return false;
   }
 };
