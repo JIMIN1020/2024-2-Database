@@ -2,7 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+}
+
 body {
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  height: fit-content;
   background-color: white;
   color: black;
+  position: relative;
 }
