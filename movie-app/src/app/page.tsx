@@ -1,10 +1,21 @@
 "use client";
 
 import Header from "@/components/Header";
+import MovieCard from "@/components/MovieCard";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
+export interface Movie {
+  id: number;
+  title: string;
+  genre: string;
+  summary: string;
+  release_year: number;
+  image_url: string;
+}
+
 function HomePage() {
+  const [movies, setMovies] = useState<Movie[] | null>(null);
   const [profile, setProfile] = useState<{
     id: string;
     password: string;
@@ -24,6 +35,16 @@ function HomePage() {
       }
     };
 
+    const getMoviews = async () => {
+      const res = await fetch(`/api/movie`, {
+        method: "GET",
+      });
+
+      const movie = await res.json().then((data) => data.result);
+      setMovies(movie);
+    };
+
+    getMoviews();
     getUser();
   }, []);
 
@@ -39,17 +60,9 @@ function HomePage() {
       </div>
       <main className="w-full flex gap-[20px] px-[24px] py-[36px]">
         <div className="grid grid-cols-4 gap-[20px] flex-1">
-          <div className="w-full flex flex-col items-center gap-[12px]">
-            <div className="max-w-[200px] w-full bg-gray-300 h-[300px]">
-              이미지
-            </div>
-            <h5>제목</h5>
-            <span>개봉일</span>
-            <span>평점</span>
-          </div>
-          <div className="bg-gray-200 w-full">영화</div>
-          <div className="bg-gray-200 w-full">영화</div>
-          <div className="bg-gray-200 w-full">영화</div>
+          {movies?.map((movie) => (
+            <MovieCard movie={movie} />
+          ))}
         </div>
         <div className="w-[300px] relative flex flex-col h-[100vh - 224px] gap-[20px]">
           <div className="border sticky top-[80px] right-0 rounded-[12px] border-gray-300 flex flex-col p-[24px] gap-[20px]">
