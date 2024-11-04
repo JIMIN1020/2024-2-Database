@@ -12,22 +12,49 @@ interface Props {
   };
 }
 
+interface MovieType extends Movie {
+  rating?: number;
+  avg_rating?: number;
+}
+
 function MoviePage({ params: { id } }: Props) {
   const [rating, setRating] = useState(0);
-  const [movieInfo, setMovieInfo] = useState<Movie | null>(null);
+  const [movieInfo, setMovieInfo] = useState<MovieType | null>(null);
+
+  const getMovieInfo = async () => {
+    const userId = sessionStorage.getItem("id");
+    const res = await fetch(`/api/movie/${id}?userId=${userId}`, {
+      method: "GET",
+    });
+
+    const movie = await res.json().then((data) => data.result[0]);
+    setMovieInfo(movie);
+  };
 
   useEffect(() => {
-    const getMovieInfo = async () => {
-      const res = await fetch(`/api/movie/${id}`, {
-        method: "GET",
-      });
-
-      const movie = await res.json().then((data) => data.result[0]);
-      setMovieInfo(movie);
-    };
-
     getMovieInfo();
   }, []);
+
+  const handleRating = async () => {
+    const res = await fetch("/api/movie/rating", {
+      method: "POST",
+      body: JSON.stringify({
+        userId: sessionStorage.getItem("id"),
+        movieId: id,
+        rating,
+      }),
+    });
+
+    const result = await res
+      .json()
+      .then((data) => data.result.affectedRows > 0);
+
+    if (result) {
+      getMovieInfo();
+    } else {
+      window.alert("다시 시도해주세요.");
+    }
+  };
 
   return (
     <div className="flex flex-col w-full h-fit">
@@ -53,27 +80,39 @@ function MoviePage({ params: { id } }: Props) {
               </h3>
               <span className="text-gray-700 text-sm">{movieInfo?.genre}</span>
             </div>
-            <span className="font-bold">평점</span>
+            <span className="font-bold">
+              평점: {Number(movieInfo?.avg_rating) || 0}
+            </span>
             <p>{movieInfo?.summary}</p>
             <hr />
             <form className="flex flex-col w-full gap-[12px]">
-              <h5 className="font-bold">내 평점 남기기</h5>
-              <div className="flex gap-[12px]">
-                {Array(5)
-                  .fill(0)
-                  .map((_, i) => (
-                    <StarButton
-                      isSelected={rating >= i + 1}
-                      onClick={() => setRating(i + 1)}
-                    />
-                  ))}
-              </div>
-              <button
-                type="button"
-                className="bg-blue-500 py-[10px] rounded-[8px] px-[16px] text-white text-sm font-bold"
-              >
-                평점 등록
-              </button>
+              <h5 className="font-bold">내 평점</h5>
+              {movieInfo?.rating ? (
+                <span className="text-2xl font-bold text-blue-600">
+                  {movieInfo.rating}점
+                </span>
+              ) : (
+                <>
+                  <div className="flex gap-[12px]">
+                    {Array(5)
+                      .fill(0)
+                      .map((_, i) => (
+                        <StarButton
+                          key={i}
+                          isSelected={rating >= i + 1}
+                          onClick={() => setRating(i + 1)}
+                        />
+                      ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRating()}
+                    className="bg-blue-500 py-[10px] rounded-[8px] px-[16px] text-white text-sm font-bold"
+                  >
+                    평점 등록
+                  </button>
+                </>
+              )}
             </form>
           </div>
         </div>

@@ -61,7 +61,7 @@ function HomePage() {
       <main className="w-full flex gap-[20px] px-[24px] py-[36px]">
         <div className="grid grid-cols-4 gap-[20px] flex-1">
           {movies?.map((movie) => (
-            <MovieCard movie={movie} />
+            <MovieCard key={movie.id} movie={movie} />
           ))}
         </div>
         <div className="w-[300px] relative flex flex-col h-[100vh - 224px] gap-[20px]">
