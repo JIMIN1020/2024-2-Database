@@ -4,12 +4,15 @@ import Link from "next/link";
 import React from "react";
 import { FaStar } from "react-icons/fa6";
 import { FaBookmark } from "react-icons/fa6";
+import { IoMdClose } from "react-icons/io";
 
 function MovieCard({
   movie,
+  isWatchList,
   onClickList,
 }: {
   movie: Movie;
+  isWatchList?: boolean;
   onClickList?: () => void;
 }) {
   const { id, image_url, title, genre, release_year, avg_rating, hasInList } =
@@ -21,7 +24,7 @@ function MovieCard({
     e.stopPropagation();
 
     const res = await fetch("/api/movie/watch-list", {
-      method: hasInList ? "DELETE" : "POST",
+      method: hasInList || isWatchList ? "DELETE" : "POST",
       body: JSON.stringify({
         userId: sessionStorage.getItem("id"),
         movieId: id,
@@ -57,19 +60,31 @@ function MovieCard({
         </div>
       </Link>
       <div className="absolute top-[4px] right-[4px] flex gap-[8px]">
-        <div className="bg-blue-500 px-[6px] py-[4px] rounded-[12px] flex items-center gap-[4px] text-white text-sm font-bold">
-          <FaStar size={12} fill="white" />
-          {avg_rating ? Number(avg_rating).toFixed(1) : "-"}
-        </div>
-        <button
-          type="button"
-          onClick={(e) => handleWatchList(e)}
-          className={` rounded-[50%] z-10 w-[30px] h-[30px] flex justify-center items-center ${
-            hasInList ? "bg-green-600" : "bg-gray-400"
-          }`}
-        >
-          <FaBookmark size={14} fill="white" />
-        </button>
+        {isWatchList ? (
+          <button
+            type="button"
+            onClick={(e) => handleWatchList(e)}
+            className="rounded-[50%] z-10 w-[30px] h-[30px] flex justify-center items-center bg-red-500"
+          >
+            <IoMdClose size={20} fill="white" />
+          </button>
+        ) : (
+          <>
+            <div className="bg-blue-500 px-[6px] py-[4px] rounded-[12px] flex items-center gap-[4px] text-white text-sm font-bold">
+              <FaStar size={12} fill="white" />
+              {avg_rating ? Number(avg_rating).toFixed(1) : "-"}
+            </div>
+            <button
+              type="button"
+              onClick={(e) => handleWatchList(e)}
+              className={`rounded-[50%] z-10 w-[30px] h-[30px] flex justify-center items-center ${
+                hasInList ? "bg-green-600" : "bg-gray-400"
+              }`}
+            >
+              <FaBookmark size={14} fill="white" />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

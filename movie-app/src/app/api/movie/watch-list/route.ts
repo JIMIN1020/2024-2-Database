@@ -11,6 +11,18 @@ interface Res {
   changedRows: number;
 }
 
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const userId = searchParams.get("userId");
+
+  const getMoviews = `SELECT m.id, m.title, m.genre, m.summary, m.release_year, m.image_url FROM WatchList wl
+  JOIN Movie m ON wl.movie_id = m.id WHERE wl.user_id = '${userId}';`;
+
+  const result = await query(getMoviews);
+
+  return NextResponse.json({ result });
+}
+
 export async function DELETE(req: NextRequest) {
   const { userId, movieId } = await req.json();
 
