@@ -62,14 +62,20 @@ def login(connection):
 def view_movies(connection, userId):
     sql = """
     SELECT m.id, m.title, m.release_year, avg_r.avg_rating,
-        CASE WHEN wl.movie_id IS NOT NULL THEN true ELSE false END AS hasInList
+        CASE WHEN wl.movie_id IS NOT NULL THEN true ELSE false END AS hasInList,
+        COALESCE(watch_count.watch_count, 0) AS scrap_count
     FROM Movie m
     LEFT JOIN (
         SELECT movie_id, AVG(rating) AS avg_rating
         FROM Rating
         GROUP BY movie_id
     ) avg_r ON m.id = avg_r.movie_id
-    LEFT JOIN WatchList wl ON wl.movie_id = m.id AND wl.user_id = %s;
+    LEFT JOIN WatchList wl ON wl.movie_id = m.id AND wl.user_id = %s
+    LEFT JOIN (
+      SELECT movie_id, COUNT(*) AS watch_count
+      FROM WatchList
+      GROUP BY movie_id
+    ) watch_count ON m.id = watch_count.movie_id;;
     """
     
     try:
@@ -78,14 +84,14 @@ def view_movies(connection, userId):
             movies = cursor.fetchall()
             
             if movies:
-                print(f"{'ID':<5} {'개봉연도':<6} {'평균 평점':<8} {'스크랩 여부':<7} {'제목':<30}")
+                print(f"{'ID':<5} {'개봉연도':<6} {'평균 평점':<8} {'스크랩 여부':<7} {'스크랩 횟수':<7} {'제목':<30}")
                 print("="*100)
                 
                 # 영화 데이터 출력
                 for movie in movies:
                     avg_rating = round(movie[3], 1) if movie[3] else '-'
                     has_in_list = 'Yes' if movie[4] else 'No'
-                    print(f"{movie[0]:<5} {movie[2]:<10} {avg_rating:<12} {has_in_list:<12} {movie[1]:<30}")
+                    print(f"{movie[0]:<5} {movie[2]:<10} {avg_rating:<12} {has_in_list:<12} {movie[5]:<12} {movie[1]:<30}")
             else:
                 print("조회된 영화가 없습니다.")
     except pymysql.MySQLError as e:
