@@ -15,8 +15,16 @@ function MovieCard({
   isWatchList?: boolean;
   onClickList?: () => void;
 }) {
-  const { id, image_url, title, genre, release_year, avg_rating, hasInList } =
-    movie;
+  const {
+    id,
+    image_url,
+    title,
+    genre,
+    release_year,
+    avg_rating,
+    hasInList,
+    scrap_count,
+  } = movie;
 
   const handleWatchList = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -57,6 +65,7 @@ function MovieCard({
           <h5 className="font-bold">{title}</h5>
           <span className="text-gray-700 text-sm">{genre}</span>
           <span className="text-sm">{release_year}</span>
+          <span className="text-sm">스크랩 횟수: {scrap_count}</span>
         </div>
       </Link>
       <div className="absolute top-[4px] right-[4px] flex gap-[8px]">

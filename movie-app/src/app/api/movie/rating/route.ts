@@ -8,3 +8,11 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ result });
 }
+
+export async function PUT(req: NextRequest) {
+  const { userId, movieId, rating } = await req.json();
+  const putRating = `UPDATE Rating SET rating = '${rating}' WHERE movie_id = '${movieId}' AND user_id = '${userId}';`;
+  const result = await query(putRating);
+
+  return NextResponse.json({ result });
+}

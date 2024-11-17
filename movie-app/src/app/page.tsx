@@ -14,6 +14,7 @@ export interface Movie {
   image_url: string;
   avg_rating?: number;
   hasInList?: boolean;
+  scrap_count?: boolean;
 }
 
 function HomePage() {

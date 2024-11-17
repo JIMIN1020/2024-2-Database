@@ -34,15 +34,28 @@ function MoviePage({ params: { id } }: Props) {
     getMovieInfo();
   }, []);
 
-  const handleRating = async () => {
-    const res = await fetch("/api/movie/rating", {
-      method: "POST",
-      body: JSON.stringify({
-        userId: sessionStorage.getItem("id"),
-        movieId: id,
-        rating,
-      }),
-    });
+  const handleRating = async (type: "update" | "post") => {
+    let res;
+
+    if (type === "post") {
+      res = await fetch("/api/movie/rating", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: sessionStorage.getItem("id"),
+          movieId: id,
+          rating,
+        }),
+      });
+    } else {
+      res = await fetch("/api/movie/rating", {
+        method: "PUT",
+        body: JSON.stringify({
+          userId: sessionStorage.getItem("id"),
+          movieId: id,
+          rating,
+        }),
+      });
+    }
 
     const result = await res
       .json()
@@ -89,31 +102,32 @@ function MoviePage({ params: { id } }: Props) {
             <hr />
             <form className="flex flex-col w-full gap-[12px]">
               <h5 className="font-bold">내 평점</h5>
+              <div className="flex gap-[12px]">
+                {Array(5)
+                  .fill(0)
+                  .map((_, i) => (
+                    <StarButton
+                      key={i}
+                      isSelected={rating >= i + 1}
+                      onClick={() => setRating(i + 1)}
+                    />
+                  ))}
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  handleRating(movieInfo?.rating ? "update" : "post")
+                }
+                className="bg-blue-500 py-[10px] rounded-[8px] px-[16px] text-white text-sm font-bold"
+              >
+                평점 {movieInfo?.rating ? "수정" : "등록"}
+              </button>
               {movieInfo?.rating ? (
                 <span className="text-2xl font-bold text-blue-600">
                   {movieInfo.rating.toFixed(1)}점
                 </span>
               ) : (
-                <>
-                  <div className="flex gap-[12px]">
-                    {Array(5)
-                      .fill(0)
-                      .map((_, i) => (
-                        <StarButton
-                          key={i}
-                          isSelected={rating >= i + 1}
-                          onClick={() => setRating(i + 1)}
-                        />
-                      ))}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleRating()}
-                    className="bg-blue-500 py-[10px] rounded-[8px] px-[16px] text-white text-sm font-bold"
-                  >
-                    평점 등록
-                  </button>
-                </>
+                <></>
               )}
             </form>
           </div>
