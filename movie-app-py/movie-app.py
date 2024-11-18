@@ -16,7 +16,7 @@ def connect_to_db():
         print(f"연결 실패: {e}")
         return None
 
- # 회원가입 기능: 유저로부터 이름, ID, 비밀번호를 받아서 User 테이블에 저장
+ # 회원가입 기능: 유저로부터 이름, id, 비밀번호를 받아서 User 테이블에 저장
 def sign_up(connection):
     # 입력 받기
     name = input("이름을 입력하세요: ")
@@ -33,7 +33,7 @@ def sign_up(connection):
     except pymysql.MySQLError as e:
         print(f"회원가입 실패: {e}")
 
-# 로그인 기능: 유저로부터 ID와 비밀번호를 받아서 User 테이블에서 확인
+# 로그인 기능: 유저로부터 id, 비밀번호를 받아서 User 테이블에서 확인
 def login(connection):
     # 입력 받기
     user_id = input("ID를 입력하세요: ")
@@ -58,7 +58,7 @@ def login(connection):
         return [False, '']
 
 
-# 전체 영화 조회 기능
+# 전체 영화 조회 기능: 영화 id, 제목, 개봉연도, 평균 평점, 스크랩 여부, 스크랩 횟수를 가져옴
 def view_movies(connection, userId):
     sql = """
     SELECT m.id, m.title, m.release_year, avg_r.avg_rating,
@@ -97,7 +97,7 @@ def view_movies(connection, userId):
     except pymysql.MySQLError as e:
         print(f"영화 조회 실패: {e}")
 
-# 평점 등록 기능
+# 평점 등록 기능: 영화 id, 평점을 입력 받아 Rating 테이블에 추가
 def add_rating(connection, userId):
     try:
         # 영화 ID와 평점 입력 받기
@@ -124,7 +124,7 @@ def add_rating(connection, userId):
     except pymysql.MySQLError as e:
         print(f"평점 등록 실패: {e}")
 
-# 평점 수정 기능
+# 평점 수정 기능: 영화 id, 새 평점을 받아서 Rating 테이블에 업데이트
 def update_rating(connection, userId):
     try:
         # 수정할 영화 ID와 새로운 평점 입력 받기
@@ -153,7 +153,7 @@ def update_rating(connection, userId):
         print(f"평점 수정 실패: {e}")
 
 
-# 영화 스크랩 기능 (시청 목록에 추가)
+# 영화 스크랩 기능: 영화 id를 입력 받아서 Watchlist 테이블에 추가
 def add_to_watchlist(connection, userId):
     try:
         # 영화 ID 입력 받기
@@ -174,7 +174,7 @@ def add_to_watchlist(connection, userId):
     except pymysql.MySQLError as e:
         print(f"스크랩 실패: {e}")
 
-# 스크랩 삭제 기능
+# 스크랩 삭제 기능: 영화 id를 입력받아서 Watchlist 테이블에서 제거
 def remove_from_watchlist(connection, userId):
     try:
         # 영화 ID 입력 받기
@@ -221,8 +221,8 @@ def display_menu(logged_in):
     choice = input("번호를 입력하세요: ")
     return choice
 
+# 유저가 선택한 메뉴에 맞는 기능을 호출하는 함수
 def handle_menu_choice(choice, connection, logged_in, userId):
-    """유저가 선택한 메뉴에 맞는 기능을 호출하는 함수"""
     if logged_in:
         if choice == '1':
             view_movies(connection, userId)
@@ -239,9 +239,9 @@ def handle_menu_choice(choice, connection, logged_in, userId):
             return False  # 로그아웃 시 logged_in 상태를 False로 변경
     else:
         if choice == '1':
-            sign_up(connection)  # 회원가입 호출
+            sign_up(connection)
         elif choice == '2':
-            logged_in, userId = login(connection)  # 로그인 호출
+            logged_in, userId = login(connection)
         elif choice == '0':
             print("시스템을 종료합니다.")
             return False
@@ -260,7 +260,7 @@ def main():
     logged_in = False  # 로그인 상태 추적
     userId = '' # 유저 id
     
-    # 메뉴를 계속해서 표시하고 선택을 받기
+    # 사용자 선택 메뉴
     while True:
         choice = display_menu(logged_in)
         logged_in, userId = handle_menu_choice(choice, connection, logged_in, userId)
